@@ -101,6 +101,7 @@ var (
 // If TrimLeadingSpace is true, leading white space in a field is ignored.
 type Reader struct {
 	Comma            rune // field delimiter (set to ',' by NewReader)
+	Comma2           rune // alternative field delimeter (set to ';' by NewReader)
 	Comment          rune // comment character for start of line
 	FieldsPerRecord  int  // number of expected fields per record
 	LazyQuotes       bool // allow lazy quotes
@@ -116,6 +117,7 @@ type Reader struct {
 func NewReader(r io.Reader) *Reader {
 	return &Reader{
 		Comma: ',',
+		Comma2: ';',
 		r:     bufio.NewReader(r),
 	}
 }
@@ -244,7 +246,7 @@ func (r *Reader) parseRecord() (fields []string, err error) {
 
 // parseField parses the next field in the record.  The read field is
 // located in r.field.  Delim is the first character not part of the field
-// (r.Comma or '\n').
+// (r.Comma1 or r.Comma2 or '\n').
 func (r *Reader) parseField() (haveField bool, delim rune, err error) {
 	r.field.Reset()
 
@@ -263,7 +265,8 @@ func (r *Reader) parseField() (haveField bool, delim rune, err error) {
 	var ws bytes.Buffer
 
 	switch r1 {
-	case r.Comma:
+	case r.Comma1:
+	case r.Comma2:
 		// will check below
 
 	case '\n':
@@ -303,7 +306,7 @@ func (r *Reader) parseField() (haveField bool, delim rune, err error) {
 						return false, 0, r.error(ErrQuote)
 					}
 				}
-				if err != nil || r1 == r.Comma {
+				if err != nil || r1 == r.Comma1 || r1 == r.Comma2 {
 					break Quoted
 				}
 				if r1 == '\n' {
@@ -336,7 +339,7 @@ func (r *Reader) parseField() (haveField bool, delim rune, err error) {
 				r.field.WriteRune(r1)
 			}
 			r1, err = r.readRune()
-			if err != nil || r1 == r.Comma {
+			if err != nil || r1 == r.Comma1 || r1 == r.Comma2 {
 				break
 			}
 			if r1 == '\n' {
