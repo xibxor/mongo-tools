@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unsafe"
 
 	"github.com/mongodb/mongo-tools/mongoimport/dateconv"
 	"gopkg.in/mgo.v2/bson"
@@ -261,8 +262,9 @@ func (dp *FieldDoubleParser) Parse(in string) (interface{}, error) {
 type FieldInt32Parser struct{}
 
 func (ip *FieldInt32Parser) Parse(in string) (interface{}, error) {
-	value, err := strconv.ParseInt(in, 10, 32)
-	return int32(value), err
+	value, err := strconv.ParseInt(in, 10, 64)
+
+	return *(*int32)(unsafe.Pointer(&value)), err
 }
 
 type FieldInt64Parser struct{}
