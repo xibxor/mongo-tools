@@ -1,3 +1,25 @@
+**mongoimport** forked changes
+===================================
+
+* can now import csvs that use semicolon (;) as a delimeter
+  
+* can even import csvs that use commas (,) or a mix of both commas AND semicolons as delimeters
+
+* if types are specified, mongoimport can now import and int32 type represented as a positive overflowing integer. 
+  
+
+For example, consider this scenario:
+   
+A field f is specified as f.int32() and the csv contains f equals 4294967295 (0xFFFFFFFF).
+     
+Instead of erroring out saying 4294967295 is greater than INT_MAX, the value will be imported as -1. Essentially, we take whatever the bit value of the field is, and we cast the memory itself to an int32. This allows importing of a variety of representations that whatever dumped the csv could have had in mind. And because two's complement is imdepotent, no values can be misinterpreted even if the csv dump is signed. So in other words, -1 and 4294967295 will have the same imported value even when in the same file.
+    
+    
+Hope these fixes/changes help someone else out..mongoimport's inflexibility was very frustrating! Feel free to create an issue if something isn't working as intended or if you need help implementing a new change. Cheers!
+
+
+
+
 MongoDB Tools
 ===================================
 
