@@ -5,7 +5,7 @@
   
 * can even import csvs that use commas (,) or a mix of both commas AND semicolons as delimeters
 
-* if types are specified, mongoimport can now import and int32 type represented as a positive overflowing integer. 
+* if types are specified, mongoimport can now import an int32 type represented as a positive overflowing integer. 
   
 
 For example, consider this scenario:
