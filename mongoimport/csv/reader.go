@@ -100,7 +100,7 @@ var (
 //
 // If TrimLeadingSpace is true, leading white space in a field is ignored.
 type Reader struct {
-	Comma            rune // field delimiter (set to ',' by NewReader)
+	Comma1           rune // field delimiter (set to ',' by NewReader)
 	Comma2           rune // alternative field delimeter (set to ';' by NewReader)
 	Comment          rune // comment character for start of line
 	FieldsPerRecord  int  // number of expected fields per record
@@ -116,7 +116,7 @@ type Reader struct {
 // NewReader returns a new Reader that reads from r.
 func NewReader(r io.Reader) *Reader {
 	return &Reader{
-		Comma: ',',
+		Comma1: ',',
 		Comma2: ';',
 		r:     bufio.NewReader(r),
 	}
